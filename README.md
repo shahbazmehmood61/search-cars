@@ -2,9 +2,17 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+### Install Nodejs
+
+Go to [https://nodejs.org/en/](https://nodejs.org/en/) to install nodejs according to your system requirements.
+
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `yarn install` or `npm install`
+
+Install the dependencies before running project and after successfull installation go to next step;
 
 ### `yarn start` or `npm run start`
 
