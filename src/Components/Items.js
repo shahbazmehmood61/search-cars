@@ -25,12 +25,12 @@ export const Items = () => {
               <th align="left" className="w-40 md:w-auto">
                 <Head>Model Name</Head>
               </th>
-              {type !== "" && loading === false && (
+              {type?.VehicleTypeName && loading === false && (
                 <th align="left" className="w-40 md:w-auto">
                   <Head>Vehicle Type Name</Head>
                 </th>
               )}
-              <th align="right" className="w-24 md:w-auto">
+              <th align="right" className="w-32 md:w-auto">
                 <Head>Model ID</Head>
               </th>
             </tr>

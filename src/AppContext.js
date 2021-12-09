@@ -10,11 +10,41 @@ export const AppProvider = ({ children }) => {
   const [count, setCount] = useState(0);
   const [numOfPages, setNumOfPages] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState("");
-  const [make, setMake] = useState("honda");
-  const [year, setYear] = useState("");
+  const [type, setType] = useState({});
+  const [make, setMake] = useState({ Make_Name: "ASTON MARTIN" });
+  const [year, setYear] = useState({});
   const [data, setData] = useState([]);
-  const [query, setQuery] = useState("/GetModelsForMake/honda");
+  const [makeList, setMakeList] = useState([{ Make_Name: "ASTON MARTIN" }]);
+  const [typeList, setTypeList] = useState([]);
+  const [query, setQuery] = useState("/GetModelsForMake/ASTON MARTIN");
+
+  useEffect(() => {
+    const url =
+      "https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=json";
+    axios
+      .get(`${url}`)
+      .then((res) => {
+        setMakeList(res.data.Results);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    setTypeList([]);
+    if (make) {
+      const url = `https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMake/${make?.Make_Name.trim()}?format=json`;
+      axios
+        .get(`${url}`)
+        .then((res) => {
+          setTypeList(res.data.Results);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }
+  }, [make]);
 
   useEffect(() => {
     handlePaginationReset();
@@ -39,19 +69,19 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     let val = "";
 
-    if (make !== "" && (type !== "" || year !== "")) {
-      val = `/GetModelsForMakeYear/make/${make}`;
+    if (make?.Make_Name && (type?.VehicleTypeName || year?.year)) {
+      val = `/GetModelsForMakeYear/make/${make?.Make_Name.trim()}`;
 
-      if (type !== "") {
-        val = val + `/vehicletype/${type}`;
+      if (type?.VehicleTypeName) {
+        val = val + `/vehicletype/${type?.VehicleTypeName.trim()}`;
       }
 
-      if (year !== "") {
-        val = val + `/modelyear/${year}`;
+      if (year?.year) {
+        val = val + `/modelyear/${year?.year}`;
       }
-    } else if (make !== "") {
-      val = `/GetModelsForMake/${make}`;
-    } else if (make === "") {
+    } else if (make?.Make_Name) {
+      val = `/GetModelsForMake/${make?.Make_Name.trim()}`;
+    } else if (!make?.Make_Name) {
       val = "";
     }
 
@@ -59,13 +89,12 @@ export const AppProvider = ({ children }) => {
   }, [type, make, year]);
 
   const handleFilterClear = () => {
-    setType("");
-    setYear("");
+    setType({});
+    setYear({});
     handlePaginationReset();
   };
 
   const handlePaginationReset = () => {
-    // setSizePerPage(10);
     setPage(0);
     setCount(0);
     setNumOfPages(0);
@@ -110,6 +139,8 @@ export const AppProvider = ({ children }) => {
     count,
     handleFilterClear,
     loading,
+    makeList,
+    typeList,
   };
 
   return (
